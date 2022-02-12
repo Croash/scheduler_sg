@@ -4,6 +4,8 @@ export {
   shouldYield,
 } from './src/scheduler'
 
+import { scheduleCallback } from './src/scheduler'
+
 export {
   Functor,
   Maybe,
