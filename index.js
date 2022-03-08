@@ -2,9 +2,8 @@ export {
   planWork,
   scheduleCallback,
   shouldYield,
+  getTime,
 } from './src/scheduler'
-
-import { scheduleCallback } from './src/scheduler'
 
 export {
   Functor,
