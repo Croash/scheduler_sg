@@ -6,7 +6,7 @@ import { peekTask, popTask, taskQueueFunctor } from './taskQueue'
 import { consoleFunc } from '../utils'
 
 const { compose, prop } = R
-
+let initTime = null
 // getTime 有问题，应该修改成传入而非使用getTime
 // flushWork:: callBack => void
 // todo currentTask => 
@@ -71,12 +71,13 @@ const flushBase = compose(
     ), 
   ),
   ({ initTime, currentTask }) => {
-    const didout =  currentTask.dueTime <= initTime  // initTime
+    const didout = currentTask.dueTime <= initTime  // initTime
+    // console.log('didout', didout, currentTask.dueTime, initTime, )
     return currentTask && (didout || !shouldYield()) ? Right.of({ didout, currentTask }) : Left.of({ currentTask })
   },
   (currentTask) => {
     // r or left
-    const initTime = timeFunctor._value.initTime
+   initTime = initTime ? getTime() : timeFunctor._value.initTime
     return { initTime, currentTask }
     // return currentTask ? Right.of({ initTime, currentTask }) : Left.of({ currentTask })
   },
