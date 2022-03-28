@@ -16,7 +16,6 @@ const flushWork = (cb) => {
   // 会有问题，帧initTime直接变成了动态的，这一帧一辈子都结束不了了。更新deadlineTime
   updateDeadline(t)
   if (cb && cb(t)) {
-    // 因为用了settimeout，是否使用IO????
     // 不使用task了，直接使用两个函数互相调用递归，来保证时间的正确性
     planWork(() => flushWork(cb))
   }
