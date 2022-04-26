@@ -38,10 +38,11 @@ const scheduleCallback = (callback) => {
   planWork(() => {
     flushWork(() => {
       flushBase(peek());
-      return !!popTask();
+      return !!peek();
     });
   });
 };
+// scheduleCallback(() => { console.log(123) })
 ```
 
 这样通过 planWork 来启动，flushBase 来不停的消费任务堆，直到堆清空。我们的 scheduler 也就完成了。

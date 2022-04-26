@@ -10,6 +10,8 @@ let initTime = null
 // getTime 有问题，应该修改成传入而非使用getTime
 // flushWork:: callBack => void
 // todo currentTask => 
+// flushWork只是用来确定任务的开始时间和当前帧超时时间，并且updateDeadline用的
+// 说白了，就是在flushWork这里，做了一个循环调用，保证flushwork一直在清理堆顶的task，cb(t)为true，堆顶不为空，就继续处理
 const flushWork = (cb) => {
   const t = getTime()
   // t要更新的，这个是用来做当前帧起始时间用的，要是把getTime放入flushBase来获取initTime
@@ -17,6 +19,7 @@ const flushWork = (cb) => {
   updateDeadline(t)
   if (cb && cb(t)) {
     // 不使用task了，直接使用两个函数互相调用递归，来保证时间的正确性
+    // 通过planWork来setimeout到下一帧，来保证留出了时间给浏览器渲染
     planWork(() => flushWork(cb))
   }
 }
