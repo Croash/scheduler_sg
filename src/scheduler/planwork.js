@@ -23,6 +23,8 @@ const flushWork = (cb) => {
     planWork(() => flushWork(cb))
   }
 }
+// 注：planWork 约等于 setTimeout，强行走下一帧，留出时间给浏览器渲染
+// 而 flushWork(cb) = (cb) => planWork(() => flushWork(cb))，保证了flushWork的循环调用，约等于一个带条件的while
 
 // ok 就这样配合一下就好了，之后不需要添加
 // planwork 其实是扳机，启动后续程序用的
@@ -35,6 +37,7 @@ const planWork = (() => {
   }
   return cb => setTimeout(cb || flushWork)
 })()
+// planWork === cb => setTimeout(cb || flushWork)
 
 // let f = () => {
 //   var mem = 1

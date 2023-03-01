@@ -18013,7 +18013,9 @@ var flushWork = function flushWork(cb) {
       return flushWork(cb);
     });
   }
-}; // ok 就这样配合一下就好了，之后不需要添加
+}; // 注：planWork 约等于 setTimeout，强行走下一帧，留出时间给浏览器渲染
+// 而 flushWork(cb) = (cb) => planWork(() => flushWork(cb))，保证了flushWork的循环调用，约等于一个带条件的while
+// ok 就这样配合一下就好了，之后不需要添加
 // planwork 其实是扳机，启动后续程序用的
 // planWork:: callback => void
 
@@ -18035,7 +18037,8 @@ var planWork = function () {
   return function (cb) {
     return setTimeout(cb || flushWork);
   };
-}(); // let f = () => {
+}(); // planWork === cb => setTimeout(cb || flushWork)
+// let f = () => {
 //   var mem = 1
 //   return () => {
 //     console.log('mem:', mem)
@@ -18126,12 +18129,17 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 // import { Functor, Maybe, Either } from '../functor'
 // scheduleCallback:: callback => void
 var scheduleCallback = function scheduleCallback(callback) {
+  // 1.将callback放到堆顶
   (0, _taskQueue.pushTask)(callback);
 
-  var cb = function cb() {
-    var r = (0, _planwork.flushBase)((0, _taskQueue.peekTask)()._value);
+  var cb = function cb(t) {
+    // 2. 执行堆顶的函数
+    var r = (0, _planwork.flushBase)((0, _taskQueue.peekTask)()._value); // 3. return 堆顶是否还有callback，true则会继续执行下去，反之不会
+    // 详情看flushWork的cb(t)
+
     return !!(0, _taskQueue.peekTask)()._value;
-  };
+  }; // 4. 触发scheduler，开始处理scheduler中的函数
+
 
   (0, _planwork.planWork)(function () {
     return (0, _planwork.flushWork)(cb);
