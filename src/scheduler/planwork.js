@@ -82,7 +82,7 @@ const flushBase = compose(
   },
   (currentTask) => {
     // r or left
-   initTime = initTime ? getTime() : timeFunctor._value.initTime
+    initTime = initTime ? getTime() : timeFunctor._value.initTime
     return { initTime, currentTask }
     // return currentTask ? Right.of({ initTime, currentTask }) : Left.of({ currentTask })
   },
